@@ -80,7 +80,20 @@ ggplot(rv) +
                  size = 1) +
   coord_flip()
 
-df2 <- rbind(ms, rv)
+gr <- df %>% filter(type == 'gr') %>%
+  mutate(start_date = if_else(first(action) == "proposal submitted", first(date), Sys.Date()),
+         end_date = if_else(last(action) == "proposal declined", last(date), 
+                            if_else(last(action) == "proposal awarded", last(date), 
+                                    Sys.Date())))
+ggplot(gr) +
+  geom_linerange(aes(x = id,
+                     ymax = end_date,
+                     ymin = start_date,
+                     color = action),
+                 size = 1) +
+  coord_flip()
+
+df2 <- rbind(ms, rv, gr)
 
 df2 <- df2 %>%
   ungroup() %>%
@@ -107,9 +120,9 @@ fig_all <- ggplot(df2) +
             size = 3) +
   labs(x = "Manuscript (#)") +
   scale_y_date(name = "Year", date_breaks = "1 year", date_labels = "%Y") + 
-  scale_color_manual(name = "Status",
-                     labels = c("In revision", "Under review", "Peer Review"),
-                     values = c('black', 'grey55', 'grey85')) + 
+  # scale_color_manual(name = "Status",
+  #                    labels = c("In revision", "Under review", "Peer Review"),
+  #                    values = c('black', 'grey55', 'grey85')) + 
   ggtitle("Manuscript Timelines") + 
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
