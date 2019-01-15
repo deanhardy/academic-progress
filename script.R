@@ -13,14 +13,20 @@ datadir <- file.path('/Users/dhardy/Dropbox/r_data/manuscript-timelines')
 df <- read.csv(file.path(datadir, "data.csv")) %>%
   mutate_all(as.character) %>%
   mutate(date = as.Date(date, "%m/%d/%y")) %>%
-  group_by(id) %>%
-  mutate(start_date = date,
-         end_date = c(date[-1], 
-                      if_else(last(action) %in% 
+  group_by(type, id) %>%
+  # mutate(start_date = date,
+  #        end_date = c(date[-1], 
+  #                     if_else(last(action) %in% 
+  #                               c("accepted", "review submitted", "proposal awarded", "proposal declined"),
+  #                             last(date), Sys.Date()))) %>%
+  mutate(start_date = if_else(action %in%
+                                c("proposal awarded", "proposal declined"), 
+                              first(date), date),
+         end_date = c(date[-1],
+                      if_else(last(action) %in%
                                 c("accepted", "review submitted", "proposal awarded", "proposal declined"),
-                                                  last(date), Sys.Date()))) %>%
-  arrange(start_date) %>%
-  ungroup()
+                              last(date), Sys.Date()))) %>%
+  arrange(start_date)
 
 # cols <- c('red', 'blue')
 ms <- df %>%
@@ -105,18 +111,19 @@ df2 <- df2 %>%
   mutate(df2, id2 = seq(1:length(df2))) %>%
   mutate(rank = factor(start_date, order = T))
 df2 <- df
+
 fig_all <- ggplot(df2) +
-  geom_linerange(aes(x = reorder(id, start_date),
+  geom_linerange(aes(x = id,
                      ymax = end_date,
                      ymin = start_date,
                      color = status),
                  size = 1,
                  filter(df2, !status %in% c('accepted', 'published'))) +
-  geom_text(aes(label = place, y = start_date, x = reorder(id, start_date)),
+  geom_text(aes(label = place, y = start_date, x = id),
             filter(df2, action %in% c('initial submission', 'proposal submitted')),
             hjust = 1.8, vjust = 0.4,
              size = 4) +
-  geom_point(aes(y = start_date, x = reorder(id, start_date)),
+  geom_point(aes(y = start_date, x = id),
              filter(ms, status == 'accepted'),
              size = 2,
              shape = 1,
@@ -146,4 +153,3 @@ tiff(file.path(datadir, "fig-all.tiff"), width = 6, height = 6, units = "in",
      res = 300, compression = "lzw")
 fig_all
 dev.off()
-     
