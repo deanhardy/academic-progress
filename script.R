@@ -151,3 +151,14 @@ tiff(file.path(datadir, "fig-faceted.tiff"), width = 6.5, height = 9, units = "i
 # grid.arrange(fig_rv, fig_gr, fig_ms, ncol = 1, nrow = 3)
 plot_grid(fig_rv, fig_gr, fig_ms, align = 'v', nrow = 3, rel_heights = c(1/3, 1/4, 1/2))
 dev.off()
+
+
+############################
+## Google Scholar grab
+############################
+library(scholar)
+
+ids <- c('id3d88wAAAAJ&hl', 'CM8MRr8AAAAJ&hl')
+mss <- 100
+
+compare_scholars(ids, mss)
