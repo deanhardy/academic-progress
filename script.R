@@ -58,12 +58,12 @@ fig_ms <- ggplot(ms) +
            size = 4) +
   geom_point(aes(y = start_date, x = id),
              filter(ms, status == 'accepted'),
-             size = 2,
-             shape = 1,
+             size = 3,
+             shape = 8,
              show.legend = F) +
   geom_hline(yintercept = as.Date('2016-08-05'), linetype = 'dashed') +
-  geom_text(aes(label = '<<< PhD conferred', y = as.Date('2017-06-05'), x = 'ms03'),
-            size = 3) +
+  geom_text(aes(label = '<<< PhD conferred', y = as.Date('2017-06-15'), x = 'ms03'),
+            size = 4) +
   labs(x = "Manuscript ID") +
   scale_y_date(name = "Year", date_breaks = "1 year", date_labels = "%Y",
                limits = c(first(df$date), Sys.Date())) +  
@@ -78,7 +78,7 @@ fig_ms <- ggplot(ms) +
         panel.grid.major.x = element_line('grey', size = 0.5, linetype = "dotted"),
         axis.text = element_text(color = 'black'),
         plot.margin = margin(0.5,0.5,0.5,0.5, 'cm')) +
-  labs(caption = "*Leading number indicates author position.") + 
+  labs(caption = "*Leading number indicates author/Co-PI position. Asterisk indicates accepted/awarded.") + 
   coord_flip()
 fig_ms
 
@@ -123,8 +123,8 @@ fig_gr <- ggplot(gr) +
             size = 4) +
   geom_point(aes(y = end_date, x = id),
              filter(gr, status == 'awarded'),
-             size = 2,
-             shape = 1,
+             size = 3,
+             shape = 8,
              show.legend = F) +
   geom_hline(yintercept = as.Date('2016-08-05'), linetype = 'dashed') +
   labs(x = "Grant Proposal ID") +
@@ -146,7 +146,7 @@ fig_gr
 # legd <- legendGrob(c('Published/Awarded', 1, 5, pch = 2))
 
 ## combining all
-tiff(file.path(datadir, "fig-faceted.tiff"), width = 6.5, height = 9, units = "in", 
+tiff(file.path(datadir, "fig-faceted.tiff"), width = 7, height = 9, units = "in", 
      res = 300, compression = "lzw")
 # grid.arrange(fig_rv, fig_gr, fig_ms, ncol = 1, nrow = 3)
 plot_grid(fig_rv, fig_gr, fig_ms, align = 'v', nrow = 3, rel_heights = c(1/3, 1/4, 1/2))
