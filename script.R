@@ -10,7 +10,7 @@ library(gridExtra)
 library(cowplot)
 
 #define data directory
-datadir <- file.path('/Users/dhardy/Dropbox/r_data/manuscript-timelines')
+datadir <- file.path('/Users/dhardy/Dropbox/r_data/academic-progress')
 
 ## import data
 df <- read.csv(file.path(datadir, "data.csv")) %>%
@@ -62,8 +62,11 @@ fig_ms <- ggplot(ms) +
              shape = 8,
              show.legend = F) +
   geom_hline(yintercept = as.Date('2016-08-05'), linetype = 'dashed') +
-  geom_text(aes(label = '<<< PhD conferred', y = as.Date('2017-06-15'), x = 'ms03'),
-            size = 4) +
+  geom_text(aes(label = '<<< PhD conferred', y = as.Date('2017-04-01'), x = 'ms02'),
+            size = 3) +
+  geom_hline(yintercept = as.Date('2018-12-18'), linetype = 'dashed') +
+  geom_text(aes(label = 'UofSC offer accepted >>>', y = as.Date('2018-01-18'), x = 'ms03'),
+            size = 3) +
   labs(x = "Manuscript ID") +
   scale_y_date(name = "Year", date_breaks = "1 year", date_labels = "%Y",
                limits = c(first(df$date), Sys.Date())) +  
@@ -92,6 +95,7 @@ fig_rv <- ggplot(rv) +
                  size = 1,
                  show.legend = F) +
   geom_hline(yintercept = as.Date('2016-08-05'), linetype = 'dashed') +
+  geom_hline(yintercept = as.Date('2018-12-18'), linetype = 'dashed') +
   labs(x = "Peer Review ID") +
   scale_y_date(name = "", date_breaks = "1 year", date_labels = "%Y",
                limits = c(first(df$date), Sys.Date())) + 
@@ -127,6 +131,7 @@ fig_gr <- ggplot(gr) +
              shape = 8,
              show.legend = F) +
   geom_hline(yintercept = as.Date('2016-08-05'), linetype = 'dashed') +
+  geom_hline(yintercept = as.Date('2018-12-18'), linetype = 'dashed') +
   labs(x = "Grant Proposal ID") +
   scale_y_date(name = "", date_breaks = "1 year", date_labels = "%Y",
                limits = c(first(df$date), Sys.Date())) + 
