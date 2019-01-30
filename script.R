@@ -88,7 +88,6 @@ fig_ms
 
 ## peer reviews
 rv <- df %>% filter(type == 'rv')
-
 fig_rv <- ggplot(rv) +
   geom_linerange(aes(x = id,
                      ymax = end_date,
