@@ -167,3 +167,5 @@ ids <- c('id3d88wAAAAJ&hl', 'CM8MRr8AAAAJ&hl')
 mss <- 100
 
 compare_scholars(ids, mss)
+
+#  git remote set-url origin https://github.com/deanhardy/academic-progress.git
