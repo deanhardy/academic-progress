@@ -72,7 +72,8 @@ fig_ms <- ggplot(ms) +
                limits = c(first(df$date), Sys.Date())) +  
   scale_color_manual(name = "MS Status",
                      labels = c("In revision", "Under review"),
-                     values = c('black', 'grey55')) + 
+                     values = c('blue', 'green')) + 
+                     #values = c('black', 'grey55')) + 
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.1, 0.8),
