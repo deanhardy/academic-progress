@@ -35,7 +35,7 @@ df <- read.csv(file.path(datadir, "data.csv")) %>%
 
 ## manuscripts
 ms <- df %>%
-  filter(status != "published", type == "ms")
+  filter(!(status %in% c("published", "terminated")), type == "ms")
 
 fig_ms <- ggplot(ms) +
   geom_linerange(aes(x = id,
@@ -169,3 +169,4 @@ mss <- 100
 compare_scholars(ids, mss)
 
 #  git remote set-url origin https://github.com/deanhardy/academic-progress.git
+
