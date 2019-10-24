@@ -15,7 +15,7 @@ datadir <- file.path('/Users/dhardy/Dropbox/r_data/academic-progress')
 ## import data
 df <- read.csv(file.path(datadir, "data.csv")) %>%
   mutate_all(as.character) %>%
-  mutate(date = as.Date(date, "%m/%d/%Y")) %>%
+  mutate(date = as.Date(date, "%m/%d/%y")) %>%
   group_by(id) %>%
   # mutate(start_date = date,
   #        end_date = c(date[-1], 
