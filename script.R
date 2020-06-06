@@ -15,7 +15,7 @@ datadir <- file.path('/Users/dhardy/Dropbox/r_data/academic-progress')
 ## import data
 df <- read.csv(file.path(datadir, "data.csv")) %>%
   mutate_all(as.character) %>%
-  mutate(date = as.Date(date, "%m/%d/%Y")) %>%
+  mutate(date = as.Date(date, "%m/%d/%y")) %>%
   group_by(id) %>%
   # mutate(start_date = date,
   #        end_date = c(date[-1], 
@@ -76,7 +76,7 @@ fig_ms <- ggplot(ms) +
                      values = c('black', 'grey55')) + 
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
-        legend.position = c(0.1, 0.8),
+        legend.position = c(0.2, 0.8),
         panel.background = element_rect('white'),
         panel.border = element_rect(colour = 'black', fill = "transparent"),
         panel.grid.major.x = element_line('grey', size = 0.5, linetype = "dotted"),
@@ -137,7 +137,7 @@ fig_gr <- ggplot(gr) +
                limits = c(first(df$date), Sys.Date())) + 
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
-        legend.position = c(0.18, 0.8),
+        legend.position = c(0.3, 0.8),
         panel.background = element_rect('white'),
         panel.border = element_rect(colour = 'black', fill = "transparent"),
         panel.grid.major.x = element_line('grey', size = 0.5, linetype = "dotted"),
