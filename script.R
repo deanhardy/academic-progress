@@ -35,9 +35,11 @@ df <- read.csv(file.path(datadir, "data.csv")) %>%
 
 ## manuscripts
 ms <- df %>%
-  filter(!(status %in% c("published", "terminated")), type == "ms") %>%
+  filter(!(status %in% c("published", "in press", "terminated")), type == "ms") %>%
   filter(id != 'msXX')
-
+pub <- df %>%
+  filter(status == "published", type == "ms")
+  
 fig_ms <- ggplot(ms) +
   geom_linerange(aes(x = id,
                      ymax = end_date,
@@ -59,8 +61,13 @@ fig_ms <- ggplot(ms) +
            size = 4) +
   geom_point(aes(y = start_date, x = id),
              filter(ms, status == 'accepted'),
-             size = 3,
+             size = 2,
              shape = 8,
+             show.legend = F) +
+  geom_point(aes(y = start_date, x = id),
+             data = pub,
+             size = 2,
+             shape = 7,
              show.legend = F) +
   geom_hline(yintercept = as.Date('2016-08-05'), linetype = 'dashed') +
   geom_text(aes(label = '<<< PhD conferred', y = as.Date('2016-08-05'), x = 'ms02'),
@@ -83,7 +90,7 @@ fig_ms <- ggplot(ms) +
         panel.grid.major.x = element_line('grey', size = 0.5, linetype = "dotted"),
         axis.text = element_text(color = 'black'),
         plot.margin = margin(0.5,0.5,0.5,0.5, 'cm')) +
-  labs(caption = "*Leading number indicates author/Co-PI position. Asterisk indicates accepted/awarded.") + 
+  labs(caption = "Leading number indicates author/Co-PI position.\nAsterisk indicates accepted/awarded.\nBox indicates published in an issue.") + 
   coord_flip()
 fig_ms
 
@@ -138,11 +145,7 @@ fig_gr <- ggplot(gr) +
                limits = c(first(df$date), Sys.Date())) + 
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
-<<<<<<< HEAD
-        legend.position = c(0.25, 0.8),
-=======
         legend.position = c(0.3, 0.8),
->>>>>>> edd8eb41b2faca9e90c5692fef8fec0c3ec4922d
         panel.background = element_rect('white'),
         panel.border = element_rect(colour = 'black', fill = "transparent"),
         panel.grid.major.x = element_line('grey', size = 0.5, linetype = "dotted"),
