@@ -35,7 +35,8 @@ df <- read.csv(file.path(datadir, "data.csv")) %>%
 
 ## manuscripts
 ms <- df %>%
-  filter(!(status %in% c("published", "terminated")), type == "ms")
+  filter(!(status %in% c("published", "terminated")), type == "ms") %>%
+  filter(id != 'msXX')
 
 fig_ms <- ggplot(ms) +
   geom_linerange(aes(x = id,
@@ -62,11 +63,11 @@ fig_ms <- ggplot(ms) +
              shape = 8,
              show.legend = F) +
   geom_hline(yintercept = as.Date('2016-08-05'), linetype = 'dashed') +
-  geom_text(aes(label = '<<< PhD conferred', y = as.Date('2017-04-01'), x = 'ms02'),
-            size = 3) +
+  geom_text(aes(label = '<<< PhD conferred', y = as.Date('2016-08-05'), x = 'ms02'),
+            size = 3, hjust = 0) +
   geom_hline(yintercept = as.Date('2018-12-18'), linetype = 'dashed') +
-  geom_text(aes(label = 'UofSC offer accepted >>>', y = as.Date('2018-01-18'), x = 'ms03'),
-            size = 3) +
+  geom_text(aes(label = 'UofSC offer accepted >>>', y = as.Date('2018-12-18'), x = 'ms03'),
+            size = 3, hjust = 1) +
   labs(x = "Manuscript ID") +
   scale_y_date(name = "Year", date_breaks = "1 year", date_labels = "%Y",
                limits = c(first(df$date), Sys.Date())) +  
@@ -137,7 +138,11 @@ fig_gr <- ggplot(gr) +
                limits = c(first(df$date), Sys.Date())) + 
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
+<<<<<<< HEAD
         legend.position = c(0.25, 0.8),
+=======
+        legend.position = c(0.3, 0.8),
+>>>>>>> edd8eb41b2faca9e90c5692fef8fec0c3ec4922d
         panel.background = element_rect('white'),
         panel.border = element_rect(colour = 'black', fill = "transparent"),
         panel.grid.major.x = element_line('grey', size = 0.5, linetype = "dotted"),
