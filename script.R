@@ -75,13 +75,25 @@ fig_ms <- ggplot(ms) +
   geom_hline(yintercept = as.Date('2018-12-18'), linetype = 'dashed') +
   geom_text(aes(label = 'UofSC offer accepted >>>', y = as.Date('2018-12-18'), x = 'ms03'),
             size = 3, hjust = 1) +
+  geom_hline(yintercept = as.Date('2019-07-01'), linetype = 'dashed') +
+  geom_text(aes(label = '<<< Became dad', y = as.Date('2019-07-01'), x = 'ms04'),
+            size = 3, hjust = 0) +
+  geom_hline(yintercept = as.Date('2019-08-16'), linetype = 'dashed') +
+  geom_text(aes(label = '<<< Start @UofSC', y = as.Date('2019-08-16'), x = 'ms06'),
+            size = 3, hjust = 0) +
+  geom_hline(yintercept = as.Date('2019-09-02'), linetype = 'dashed') +
+  geom_text(aes(label = '<<< EFMLA', y = as.Date('2019-09-02'), x = 'ms08'),
+            size = 3, hjust = 0) +
+  geom_hline(yintercept = as.Date('2020-03-11'), linetype = 'dashed') +
+  geom_text(aes(label = '<<< COVID19', y = as.Date('2020-03-11'), x = 'ms10'),
+            size = 3, hjust = 0) +
   labs(x = "Manuscript ID") +
   scale_y_date(name = "Year", date_breaks = "1 year", date_labels = "%Y",
                limits = c(first(df$date), Sys.Date())) +  
-  scale_color_manual(name = "MS Status",
+  scale_color_manual(name = "Status",
                      labels = c("In revision", "Under review"),
                      #values = c('dark blue', 'dark red')) + 
-                     values = c('black', 'grey55')) + 
+                     values = c('grey55', 'black')) + 
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.2, 0.8),
