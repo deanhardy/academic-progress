@@ -39,7 +39,18 @@ ms <- df %>%
   filter(id != 'msXX')
 pub <- df %>%
   filter(status == "published", type == "ms")
-  
+
+## number submissions/pubs per year since first, first author submission
+yrs <- interval("2015-05-14", Sys.Date()) %>%
+  time_length('years')
+ms_rate <- ms %>%
+  filter(date > "2015-05-01") %>%
+  group_by(type) %>%
+  summarise(submitted = sum(action == 'initial submission'),
+            accepted = sum(action == 'accepted')) %>%
+  mutate(s_rate = submitted/yrs, a_rate = accepted/yrs)
+ms_rate
+
 fig_ms <- ggplot(ms) +
   geom_linerange(aes(x = id,
                      ymax = end_date,
@@ -87,6 +98,9 @@ fig_ms <- ggplot(ms) +
   geom_hline(yintercept = as.Date('2020-03-11'), linetype = 'dashed') +
   geom_text(aes(label = '<<< COVID19', y = as.Date('2020-03-11'), x = 'ms10'),
             size = 3, hjust = 0) +
+  geom_text(aes(label = paste('Submission rate =', round(ms_rate$s_rate, 2), '/yr'), 
+                y = as.Date('2013-01-01'), x = 'ms09'),
+            size = 3, hjust = 0) +
   labs(x = "Manuscript ID") +
   scale_y_date(name = "Year", date_breaks = "1 year", date_labels = "%Y",
                limits = c(first(df$date), Sys.Date())) +  
@@ -106,16 +120,6 @@ fig_ms <- ggplot(ms) +
   coord_flip()
 fig_ms
 
-## number submissions/pubs per year since first, first author submission
-yrs <- interval("2015-05-14", Sys.Date()) %>%
-  time_length('years')
-ms_rate <- ms %>%
-  filter(date > "2015-05-01") %>%
-  group_by(type) %>%
-  summarise(submitted = sum(action == 'initial submission'),
-            accepted = sum(action == 'accepted')) %>%
-  mutate(s_rate = submitted/yrs, a_rate = accepted/yrs)
-ms_rate
 
 ## peer reviews
 rv <- df %>% filter(type == 'rv')
