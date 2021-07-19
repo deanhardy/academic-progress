@@ -42,13 +42,13 @@ pub <- df %>%
 
 ## number submissions/pubs per year since significant events
 evt_dates <- c('2012-07-16', '2015-05-14', '2016-08-05', '2018-12-18', '2019-08-16')
-events <- c('first manuscript', '1st first author', 'PhD conferred', 'UofSC offer', 'UofSC start')
+events <- c('First MS', 'First 1st author', 'PhD conferred', 'UofSC offer', 'UofSC start')
 evt <- data.frame(evt_dates, events)
 ms_rate <- NULL # used in loop appending outputs
-x = 1 # # of years of tenure clock stoppage
-# tt_stop <- c('no years stoppage', paste(x, 'years stoppage'))
+x <- c(0, 1) # of years of tenure clock stoppage
+
 # 
-# for (i in 1:length(tt_stop)) {
+for (j in 1:length(x)) {
 
   for (i in 1:length(evt_dates)) {
     yrs <- interval(evt_dates[[i]], Sys.Date()) %>%
@@ -59,19 +59,41 @@ x = 1 # # of years of tenure clock stoppage
       group_by(type) %>%
       summarise(submitted = sum(action == 'initial submission'),
                 accepted = sum(action == 'accepted')) %>%
-      mutate(type = paste(x, 'years stoppage'), s_rate = round(submitted/(yrs-x), 1), a_rate = round(accepted/(yrs-x), 1), 
-             years = round((yrs-x), 1),
+      mutate(yrs_tt_stop = x[[j]], s_rate = round(submitted/(yrs-x[[j]]), 1), a_rate = round(accepted/(yrs-x[[j]]), 1), 
+             years = round((yrs-x[[j]]), 1),
              evt_dates = evt_dates[[i]])
     
     ms_rate <- rbind(OUT, ms_rate)
   }
-# }
+}
 
 ms_rate <- left_join(ms_rate, evt) %>%
-  select(type, events, evt_dates, years, submitted, accepted, s_rate, a_rate) %>%
-  arrange(desc(years))
+  select(yrs_tt_stop, events, evt_dates, years, submitted, accepted, s_rate, a_rate) %>%
+  arrange(yrs_tt_stop, desc(years))
 
-write.csv(ms_rate, file.path(datadir, "ms_rate_1yr-stoppage.csv"))
+write.csv(ms_rate, file.path(datadir, "ms_rate.csv"))
+
+## plot publication rates
+fig_rt <- ggplot(ms_rate) +
+  geom_col(aes(reorder(events, -years), s_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
+  ylab("Mean Annual Manuscript Submission Rate") + 
+  xlab("Events") + 
+  geom_hline(yintercept = 2, linetype = 'dashed') + 
+  labs(fill = 'Tenure Stoppage (years)') + 
+  theme(legend.background = element_rect(color = "black"),
+        legend.key = element_rect(fill = 'white'),
+        legend.position = c(0.2, 0.85),
+        panel.background = element_rect('white'),
+        panel.border = element_rect(colour = 'black', fill = "transparent"),
+        panel.grid.major.y = element_line('grey', size = 0.5, linetype = "dashed"),
+        axis.text = element_text(color = 'black'),)
+fig_rt
+
+# ## save pub rates bar graph
+# tiff(file.path(datadir, "ms_rates.tiff"), width = 5, height = 5, units = "in", 
+#      res = 300, compression = "lzw")
+# fig_rt
+# dev.off()
 
 ## plot ms timelines
 fig_ms <- ggplot(ms) +
@@ -209,6 +231,13 @@ fig_gr <- ggplot(gr) +
 fig_gr
 
 # legd <- legendGrob(c('Published/Awarded', 1, 5, pch = 2))
+
+## combining all
+tiff(file.path(datadir, "fig-manuscripts.tiff"), width = 7, height = 9, units = "in", 
+     res = 300, compression = "lzw")
+# grid.arrange(fig_rv, fig_gr, fig_ms, ncol = 1, nrow = 3)
+plot_grid(fig_rt, fig_ms, align = 'v', nrow = 2, rel_heights = c(1/2, 1/2))
+dev.off()
 
 ## combining all
 tiff(file.path(datadir, "fig-faceted.tiff"), width = 7, height = 9, units = "in", 
