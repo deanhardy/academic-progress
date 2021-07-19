@@ -78,16 +78,18 @@ write.csv(ms_rate, file.path(datadir, "ms_rate.csv"))
 ## plot publication rates
 fig_rt <- ggplot(ms_rate) +
   geom_col(aes(reorder(event_names, -years), s_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
-  ylab("Mean Annual Manuscript Submission Rate") + 
   xlab("Events") + 
-  geom_hline(yintercept = 2, linetype = 'dashed') + 
+  geom_hline(yintercept = 2, linetype = 'longdash') + 
+  scale_y_continuous(name = "Mean Annual Manuscript Submission Rate", breaks = seq(0, 3.5, 1),
+                     minor_breaks = seq(0, 3.5, 0.1), expand = c(0,0), limits = c(0,3.5)) + 
   labs(fill = 'Tenure Stoppage (years)') + 
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.2, 0.85),
         panel.background = element_rect('white'),
         panel.border = element_rect(colour = 'black', fill = "transparent"),
-        panel.grid.major.y = element_line('grey', size = 0.5, linetype = "dashed"),
+        panel.grid.major.y = element_line('grey', size = 0.5, linetype = "solid"),
+        panel.grid.minor = element_line(colour="grey", size=0.1, linetype = 'longdash'),
         axis.text = element_text(color = 'black'),)
 fig_rt
 
