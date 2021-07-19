@@ -45,7 +45,7 @@ evt_dates <- c('2012-07-16', '2015-05-14', '2016-08-05', '2018-12-18', '2019-08-
 events <- c('first manuscript', '1st first author', 'PhD conferred', 'UofSC offer', 'UofSC start')
 evt <- data.frame(evt_dates, events)
 ms_rate <- NULL # used in loop appending outputs
-x = 0 # # of years of tenure clock stoppage
+x = 1 # # of years of tenure clock stoppage
 
   for (i in 1:length(evt_dates)) {
     yrs <- interval(evt_dates[[i]], Sys.Date()) %>%
@@ -64,6 +64,8 @@ x = 0 # # of years of tenure clock stoppage
 ms_rate <- left_join(ms_rate, evt) %>%
   select(events, evt_dates, years, submitted, accepted, s_rate, a_rate) %>%
   arrange(desc(years))
+
+write.csv(ms_rate, file.path(datadir, "ms_rate.csv"))
 
 ## plot ms timelines
 fig_ms <- ggplot(ms) +
