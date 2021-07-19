@@ -40,17 +40,32 @@ ms <- df %>%
 pub <- df %>%
   filter(status == "published", type == "ms")
 
-## number submissions/pubs per year since first, first author submission
-yrs <- interval("2015-05-14", Sys.Date()) %>%
-  time_length('years')
-ms_rate <- ms %>%
-  filter(date > "2015-05-01") %>%
-  group_by(type) %>%
-  summarise(submitted = sum(action == 'initial submission'),
-            accepted = sum(action == 'accepted')) %>%
-  mutate(s_rate = submitted/yrs, a_rate = accepted/yrs)
-ms_rate
+## number submissions/pubs per year since significant events
+evt_dates <- c('2012-07-16', '2015-05-14', '2016-08-05', '2018-12-18', '2019-08-16')
+events <- c('first manuscript', '1st first author', 'PhD conferred', 'UofSC offer', 'UofSC start')
+evt <- data.frame(evt_dates, events)
+ms_rate <- NULL # used in loop appending outputs
+x = 0 # # of years of tenure clock stoppage
 
+  for (i in 1:length(evt_dates)) {
+    yrs <- interval(evt_dates[[i]], Sys.Date()) %>%
+    time_length('years')
+    
+    OUT <- ms %>%
+      filter(date >= evt_dates[[i]]) %>%
+      group_by(type) %>%
+      summarise(submitted = sum(action == 'initial submission'),
+                accepted = sum(action == 'accepted')) %>%
+      mutate(s_rate = submitted/(yrs-x), a_rate = accepted/(yrs-x), years = (yrs-x),
+             evt_dates = evt_dates[[i]])
+    
+    ms_rate <- rbind(OUT, ms_rate)
+  }
+ms_rate <- left_join(ms_rate, evt) %>%
+  select(events, evt_dates, years, submitted, accepted, s_rate, a_rate) %>%
+  arrange(desc(years))
+
+## plot ms timelines
 fig_ms <- ggplot(ms) +
   geom_linerange(aes(x = id,
                      ymax = end_date,
@@ -98,9 +113,9 @@ fig_ms <- ggplot(ms) +
   geom_hline(yintercept = as.Date('2020-03-11'), linetype = 'dashed') +
   geom_text(aes(label = '<<< COVID19', y = as.Date('2020-03-11'), x = 'ms10'),
             size = 3, hjust = 0) +
-  geom_text(aes(label = paste('Submission rate =', round(ms_rate$s_rate, 2), '/yr'), 
-                y = as.Date('2013-01-01'), x = 'ms09'),
-            size = 3, hjust = 0) +
+  # geom_text(aes(label = paste('Submission rate =', round(ms_rate$s_rate, 2), '/yr'), 
+  #               y = as.Date('2013-01-01'), x = 'ms09'),
+  #           size = 3, hjust = 0) +
   labs(x = "Manuscript ID") +
   scale_y_date(name = "Year", date_breaks = "1 year", date_labels = "%Y",
                limits = c(first(df$date), Sys.Date())) +  
@@ -116,7 +131,9 @@ fig_ms <- ggplot(ms) +
         panel.grid.major.x = element_line('grey', size = 0.5, linetype = "dotted"),
         axis.text = element_text(color = 'black'),
         plot.margin = margin(0.5,0.5,0.5,0.5, 'cm')) +
-  labs(caption = "Leading number indicates author/Co-PI position.\nAsterisk indicates accepted/awarded.\nBox indicates published in an issue.") + 
+  annotate("rect", ymin = as.Date('2019-08-16'), ymax = as.Date('2020-08-15'), xmin = 'ms01', xmax = 'ms15',
+           alpha = .2) +
+  labs(caption = "Leading number indicates author/Co-PI position.\nAsterisk indicates accepted/awarded.\nBox indicates published in an issue.\nShading indicates tenure clock stoppage.") + 
   coord_flip()
 fig_ms
 
