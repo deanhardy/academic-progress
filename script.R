@@ -68,14 +68,16 @@ for (j in 1:length(x)) {
 }
 
 ms_rate <- left_join(ms_rate, evt) %>%
-  select(yrs_tt_stop, events, evt_dates, years, submitted, accepted, s_rate, a_rate) %>%
+  mutate(evt_dates_par = paste('(', evt_dates, ')', sep = '')) %>%
+  mutate(event_names = paste(events, evt_dates_par, sep = '\n')) %>%
+  select(yrs_tt_stop, events, evt_dates, event_names, years, submitted, accepted, s_rate, a_rate) %>%
   arrange(yrs_tt_stop, desc(years))
 
 write.csv(ms_rate, file.path(datadir, "ms_rate.csv"))
 
 ## plot publication rates
 fig_rt <- ggplot(ms_rate) +
-  geom_col(aes(reorder(events, -years), s_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
+  geom_col(aes(reorder(event_names, -years), s_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
   ylab("Mean Annual Manuscript Submission Rate") + 
   xlab("Events") + 
   geom_hline(yintercept = 2, linetype = 'dashed') + 
