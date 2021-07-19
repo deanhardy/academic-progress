@@ -45,7 +45,7 @@ evt_dates <- c('2012-07-16', '2015-05-14', '2016-08-05', '2018-12-18', '2019-08-
 events <- c('first manuscript', '1st first author', 'PhD conferred', 'UofSC offer', 'UofSC start')
 evt <- data.frame(evt_dates, events)
 ms_rate <- NULL # used in loop appending outputs
-x = 0 # # of years of tenure clock stoppage
+x = 1 # # of years of tenure clock stoppage
 # tt_stop <- c('no years stoppage', paste(x, 'years stoppage'))
 # 
 # for (i in 1:length(tt_stop)) {
@@ -59,7 +59,8 @@ x = 0 # # of years of tenure clock stoppage
       group_by(type) %>%
       summarise(submitted = sum(action == 'initial submission'),
                 accepted = sum(action == 'accepted')) %>%
-      mutate(type = paste(x, 'years stoppage'), s_rate = submitted/(yrs-x), a_rate = accepted/(yrs-x), years = (yrs-x),
+      mutate(type = paste(x, 'years stoppage'), s_rate = round(submitted/(yrs-x), 1), a_rate = round(accepted/(yrs-x), 1), 
+             years = round((yrs-x), 1),
              evt_dates = evt_dates[[i]])
     
     ms_rate <- rbind(OUT, ms_rate)
@@ -70,7 +71,7 @@ ms_rate <- left_join(ms_rate, evt) %>%
   select(type, events, evt_dates, years, submitted, accepted, s_rate, a_rate) %>%
   arrange(desc(years))
 
-write.csv(ms_rate, file.path(datadir, "ms_rate_nostoppage.csv"))
+write.csv(ms_rate, file.path(datadir, "ms_rate_1yr-stoppage.csv"))
 
 ## plot ms timelines
 fig_ms <- ggplot(ms) +
