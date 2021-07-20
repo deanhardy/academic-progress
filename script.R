@@ -80,10 +80,11 @@ fig_rt <- ggplot(ms_rate) +
   geom_col(aes(reorder(event_names, -years), s_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
   xlab("Events") + 
   geom_hline(yintercept = 2, linetype = 'longdash') + 
-  scale_y_continuous(name = "Mean Annual Manuscript Submission Rate", breaks = seq(0, 4.5, 1),
-                     minor_breaks = seq(0, 4.5, 0.1), expand = c(0,0), limits = c(0,4.5)) + 
+  scale_y_continuous(name = "Mean Annual Manuscript Submission Rate", breaks = seq(0, 4, 1),
+                     minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
   scale_fill_manual(values = c('grey80','grey30')) + 
   labs(fill = 'Tenure Stoppage (years)') + 
+  ggtitle("Publication Rates") +
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.2, 0.85),
@@ -168,6 +169,7 @@ fig_ms <- ggplot(ms) +
         plot.margin = margin(0.5,0.5,0.5,0.5, 'cm')) +
   annotate("rect", ymin = as.Date('2019-08-16'), ymax = as.Date('2020-08-15'), xmin = 'ms01', xmax = 'ms15',
            alpha = .2) +
+  ggtitle("Manuscript Timelines") +
   labs(caption = "Leading number indicates author/Co-PI position.\nAsterisk indicates accepted/awarded.\nBox indicates published in an issue.\nShading indicates tenure clock stoppage.") + 
   coord_flip()
 fig_ms
@@ -237,8 +239,8 @@ fig_gr
 
 # legd <- legendGrob(c('Published/Awarded', 1, 5, pch = 2))
 
-## combining all
-tiff(file.path(datadir, "fig-manuscripts.tiff"), width = 7, height = 9, units = "in", 
+## manuscripts timelines and pub rates
+tiff(file.path(datadir, "fig-manuscripts.tiff"), width = 6.5, height = 9, units = "in", 
      res = 300, compression = "lzw")
 # grid.arrange(fig_rv, fig_gr, fig_ms, ncol = 1, nrow = 3)
 plot_grid(fig_rt, fig_ms, align = 'v', nrow = 2, rel_heights = c(1/2, 1/2))
