@@ -80,8 +80,8 @@ fig_rt <- ggplot(ms_rate) +
   geom_col(aes(reorder(event_names, -years), s_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
   xlab("Events") + 
   geom_hline(yintercept = 2, linetype = 'longdash') + 
-  scale_y_continuous(name = "Mean Annual Manuscript Submission Rate", breaks = seq(0, 3.5, 1),
-                     minor_breaks = seq(0, 3.5, 0.1), expand = c(0,0), limits = c(0,3.5)) + 
+  scale_y_continuous(name = "Mean Annual Manuscript Submission Rate", breaks = seq(0, 4.5, 1),
+                     minor_breaks = seq(0, 4.5, 0.1), expand = c(0,0), limits = c(0,4.5)) + 
   scale_fill_manual(values = c('grey80','grey30')) + 
   labs(fill = 'Tenure Stoppage (years)') + 
   theme(legend.background = element_rect(color = "black"),
@@ -263,4 +263,5 @@ mss <- 100
 compare_scholars(ids, mss)
 
 #  git remote set-url origin https://github.com/deanhardy/academic-progress.git
+
 
