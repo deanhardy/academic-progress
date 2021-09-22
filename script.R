@@ -84,7 +84,7 @@ fig_rt <- ggplot(ms_rate) +
                      minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
   scale_fill_manual(values = c('grey80','grey30')) + 
   labs(fill = 'Tenure Stoppage (years)') + 
-  ggtitle("Publication Rates") +
+  ggtitle("Submission Rates") +
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.2, 0.85),
