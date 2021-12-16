@@ -75,8 +75,28 @@ ms_rate <- left_join(ms_rate, evt) %>%
 
 write.csv(ms_rate, file.path(datadir, "ms_rate.csv"))
 
-## plot publication rates
-fig_rt <- ggplot(ms_rate) +
+## plot acceptance rates
+fig_ar <- ggplot(ms_rate) +
+  geom_col(aes(reorder(event_names, -years), a_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
+  xlab("Events") + 
+  geom_hline(yintercept = 2, linetype = 'longdash') + 
+  scale_y_continuous(name = "Mean Annual Manuscript Acceptance Rate", breaks = seq(0, 4, 1),
+                     minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
+  scale_fill_manual(values = c('grey80','grey30')) + 
+  labs(fill = 'Tenure Stoppage (years)') + 
+  ggtitle("Acceptance Rates") +
+  theme(legend.background = element_rect(color = "black"),
+        legend.key = element_rect(fill = 'white'),
+        legend.position = c(0.2, 0.85),
+        panel.background = element_rect('white'),
+        panel.border = element_rect(colour = 'black', fill = "transparent"),
+        panel.grid.major.y = element_line('grey', size = 0.5, linetype = "solid"),
+        panel.grid.minor = element_line(colour="grey", size=0.1, linetype = 'longdash'),
+        axis.text = element_text(color = 'black'),)
+fig_ar
+
+## plot acceptance rates
+fig_sr <- ggplot(ms_rate) +
   geom_col(aes(reorder(event_names, -years), s_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
   xlab("Events") + 
   geom_hline(yintercept = 2, linetype = 'longdash') + 
@@ -93,7 +113,7 @@ fig_rt <- ggplot(ms_rate) +
         panel.grid.major.y = element_line('grey', size = 0.5, linetype = "solid"),
         panel.grid.minor = element_line(colour="grey", size=0.1, linetype = 'longdash'),
         axis.text = element_text(color = 'black'),)
-fig_rt
+fig_sr
 
 # ## save pub rates bar graph
 # tiff(file.path(datadir, "ms_rates.tiff"), width = 5, height = 5, units = "in", 
@@ -240,10 +260,10 @@ fig_gr
 # legd <- legendGrob(c('Published/Awarded', 1, 5, pch = 2))
 
 ## manuscripts timelines and pub rates
-tiff(file.path(datadir, "fig-manuscripts.tiff"), width = 6.5, height = 9, units = "in", 
+tiff(file.path(datadir, "fig-manuscript-rates.tiff"), width = 6.5, height = 9, units = "in", 
      res = 300, compression = "lzw")
 # grid.arrange(fig_rv, fig_gr, fig_ms, ncol = 1, nrow = 3)
-plot_grid(fig_rt, fig_ms, align = 'v', nrow = 2, rel_heights = c(1/2, 1/2))
+plot_grid(fig_sr, fig_ar, align = 'v', nrow = 2, rel_heights = c(1/2, 1/2))
 dev.off()
 
 ## combining all
