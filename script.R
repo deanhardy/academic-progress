@@ -75,27 +75,7 @@ ms_rate <- left_join(ms_rate, evt) %>%
 
 write.csv(ms_rate, file.path(datadir, "ms_rate.csv"))
 
-## plot acceptance rates
-fig_ar <- ggplot(ms_rate) +
-  geom_col(aes(reorder(event_names, -years), a_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
-  xlab("Events") + 
-  geom_hline(yintercept = 2, linetype = 'longdash') + 
-  scale_y_continuous(name = "Mean Annual Manuscript Acceptance Rate", breaks = seq(0, 4, 1),
-                     minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
-  scale_fill_manual(values = c('grey80','grey30')) + 
-  labs(fill = 'Tenure Stoppage (years)') + 
-  ggtitle("Acceptance Rates") +
-  theme(legend.background = element_rect(color = "black"),
-        legend.key = element_rect(fill = 'white'),
-        legend.position = c(0.2, 0.85),
-        panel.background = element_rect('white'),
-        panel.border = element_rect(colour = 'black', fill = "transparent"),
-        panel.grid.major.y = element_line('grey', size = 0.5, linetype = "solid"),
-        panel.grid.minor = element_line(colour="grey", size=0.1, linetype = 'longdash'),
-        axis.text = element_text(color = 'black'),)
-fig_ar
-
-## plot acceptance rates
+## plot submission rates
 fig_sr <- ggplot(ms_rate) +
   geom_col(aes(reorder(event_names, -years), s_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
   xlab("Events") + 
@@ -104,7 +84,7 @@ fig_sr <- ggplot(ms_rate) +
                      minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
   scale_fill_manual(values = c('grey80','grey30')) + 
   labs(fill = 'Tenure Stoppage (years)') + 
-  ggtitle("Submission Rates") +
+  ggtitle(paste("Submission Rates as of", Sys.Date())) +
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.2, 0.85),
@@ -114,6 +94,26 @@ fig_sr <- ggplot(ms_rate) +
         panel.grid.minor = element_line(colour="grey", size=0.1, linetype = 'longdash'),
         axis.text = element_text(color = 'black'),)
 fig_sr
+
+## plot acceptance rates
+fig_ar <- ggplot(ms_rate) +
+  geom_col(aes(reorder(event_names, -years), a_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
+  xlab("Events") + 
+  geom_hline(yintercept = 2, linetype = 'longdash') + 
+  scale_y_continuous(name = "Mean Annual Manuscript Acceptance Rate", breaks = seq(0, 4, 1),
+                     minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
+  scale_fill_manual(values = c('grey80','grey30')) + 
+  labs(fill = 'Tenure Stoppage (years)') + 
+  ggtitle(paste("Acceptance Rates as of", Sys.Date())) +
+  theme(legend.background = element_rect(color = "black"),
+        legend.key = element_rect(fill = 'white'),
+        legend.position = c(0.2, 0.85),
+        panel.background = element_rect('white'),
+        panel.border = element_rect(colour = 'black', fill = "transparent"),
+        panel.grid.major.y = element_line('grey', size = 0.5, linetype = "solid"),
+        panel.grid.minor = element_line(colour="grey", size=0.1, linetype = 'longdash'),
+        axis.text = element_text(color = 'black'),)
+fig_ar
 
 # ## save pub rates bar graph
 # tiff(file.path(datadir, "ms_rates.tiff"), width = 5, height = 5, units = "in", 
@@ -208,6 +208,7 @@ fig_rv <- ggplot(rv) +
   labs(x = "Peer Review ID") +
   scale_y_date(name = "", date_breaks = "1 year", date_labels = "%Y",
                limits = c(first(df$date), Sys.Date())) + 
+  ggtitle(paste("Status as of", Sys.Date())) +
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.18, 0.8),
