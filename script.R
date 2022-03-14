@@ -223,7 +223,7 @@ fig_rv <- ggplot(rv) +
 fig_rv
 
 ## grant proposals
-gr <- filter(df, type == 'gr')
+gr <- filter(df, type == 'gr' & action != 'pre-proposal submitted')
 
 fig_gr <- ggplot(gr) +
   geom_linerange(aes(x = id,
