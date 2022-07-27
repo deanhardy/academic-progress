@@ -274,7 +274,9 @@ tiff(file.path(datadir, "fig-faceted.tiff"), width = 7, height = 9, units = "in"
 plot_grid(fig_rv, fig_gr, fig_ms, align = 'v', nrow = 3, rel_heights = c(1/3, 1/4, 1/2))
 dev.off()
 
-
+## perspective on initial submission rates
+ggplot(filter(df, action == 'initial submission'), aes(date, id)) + geom_point() + 
+  geom_
 ############################
 ## Google Scholar grab
 ############################
