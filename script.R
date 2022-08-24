@@ -35,7 +35,7 @@ df <- read.csv(file.path(datadir, "data.csv")) %>%
 
 ## manuscripts
 ms <- df %>%
-  filter(!(status %in% c("published", "in press", "terminated")), type == "ms") %>%
+  filter(!(status %in% c("in press", "terminated")), type == "ms") %>%
   filter(id != 'msXX')
 pub <- df %>%
   filter(status == "published", type == "ms")
@@ -58,8 +58,12 @@ for (j in 1:length(x)) {
       filter(date >= evt_dates[[i]]) %>%
       group_by(type) %>%
       summarise(submitted = sum(action == 'initial submission'),
-                accepted = sum(action == 'accepted')) %>%
-      mutate(yrs_tt_stop = x[[j]], s_rate = round(submitted/(yrs-x[[j]]), 1), a_rate = round(accepted/(yrs-x[[j]]), 1), 
+                accepted = sum(action == 'accepted'),
+                published = sum(action == 'issue assigned')) %>%
+      mutate(yrs_tt_stop = x[[j]], 
+             s_rate = round(submitted/(yrs-x[[j]]), 1), 
+             a_rate = round(accepted/(yrs-x[[j]]), 1),
+             p_rate = round(published/(yrs-x[[j]]), 1),
              years = round((yrs-x[[j]]), 1),
              evt_dates = evt_dates[[i]])
     
@@ -70,7 +74,7 @@ for (j in 1:length(x)) {
 ms_rate <- left_join(ms_rate, evt) %>%
   mutate(evt_dates_par = paste('(', evt_dates, ')', sep = '')) %>%
   mutate(event_names = paste(events, evt_dates_par, sep = '\n')) %>%
-  select(yrs_tt_stop, events, evt_dates, event_names, years, submitted, accepted, s_rate, a_rate) %>%
+  select(yrs_tt_stop, events, evt_dates, event_names, years, submitted, accepted, published, s_rate, a_rate, p_rate) %>%
   arrange(yrs_tt_stop, desc(years))
 
 write.csv(ms_rate, file.path(datadir, "ms_rate.csv"))
@@ -115,12 +119,35 @@ fig_ar <- ggplot(ms_rate) +
         axis.text = element_text(color = 'black'),)
 fig_ar
 
+## plot publication rates
+fig_pr <- ggplot(ms_rate) +
+  geom_col(aes(reorder(event_names, -years), p_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
+  xlab("Events") + 
+  geom_hline(yintercept = 2, linetype = 'longdash') + 
+  scale_y_continuous(name = "Mean Annual Manuscript Publication Rate", breaks = seq(0, 4, 1),
+                     minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
+  scale_fill_manual(values = c('grey80','grey30')) + 
+  labs(fill = 'Tenure Stoppage (years)') + 
+  ggtitle(paste("Publication Rates as of", Sys.Date())) +
+  theme(legend.background = element_rect(color = "black"),
+        legend.key = element_rect(fill = 'white'),
+        legend.position = c(0.2, 0.85),
+        panel.background = element_rect('white'),
+        panel.border = element_rect(colour = 'black', fill = "transparent"),
+        panel.grid.major.y = element_line('grey', size = 0.5, linetype = "solid"),
+        panel.grid.minor = element_line(colour="grey", size=0.1, linetype = 'longdash'),
+        axis.text = element_text(color = 'black'),)
+fig_pr
+
 # ## save pub rates bar graph
 # tiff(file.path(datadir, "ms_rates.tiff"), width = 5, height = 5, units = "in", 
 #      res = 300, compression = "lzw")
 # fig_rt
 # dev.off()
 
+ms <- ms %>%
+  filter(!(status %in% c("published")), type == "ms")
+  
 ## plot ms timelines
 fig_ms <- ggplot(ms) +
   geom_linerange(aes(x = id,
@@ -260,7 +287,7 @@ fig_gr
 
 # legd <- legendGrob(c('Published/Awarded', 1, 5, pch = 2))
 
-## manuscripts timelines and pub rates
+## submission and accceptance rates
 tiff(file.path(datadir, "fig-manuscript-rates.tiff"), width = 6.5, height = 9, units = "in", 
      res = 300, compression = "lzw")
 # grid.arrange(fig_rv, fig_gr, fig_ms, ncol = 1, nrow = 3)
@@ -274,9 +301,15 @@ tiff(file.path(datadir, "fig-faceted.tiff"), width = 7, height = 9, units = "in"
 plot_grid(fig_rv, fig_gr, fig_ms, align = 'v', nrow = 3, rel_heights = c(1/3, 1/4, 1/2))
 dev.off()
 
+## pub rates plus ms timelines
+tiff(file.path(datadir, "fig-ms-pub-rates.tiff"), width = 7, height = 9, units = "in", 
+     res = 300, compression = "lzw")
+# grid.arrange(fig_rv, fig_gr, fig_ms, ncol = 1, nrow = 3)
+plot_grid(fig_pr, fig_ms, align = 'v', nrow = 2, rel_heights = c(1/2, 1/2))
+dev.off()
+
 ## perspective on initial submission rates
-ggplot(filter(df, action == 'initial submission'), aes(date, id)) + geom_point() + 
-  geom_
+ggplot(filter(df, action == 'initial submission'), aes(date, id)) + geom_point() 
 ############################
 ## Google Scholar grab
 ############################
@@ -287,6 +320,6 @@ mss <- 100
 
 compare_scholars(ids, mss)
 
-#  git remote set-url origin https://github.com/deanhardy/academic-progress.git
+  #  git remote set-url origin https://github.com/deanhardy/academic-progress.git
 
 
