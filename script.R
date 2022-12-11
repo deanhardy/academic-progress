@@ -310,26 +310,6 @@ dev.off()
 
 ## perspective on initial submission rates
 ggplot(filter(df, action == 'initial submission'), aes(date, id)) + geom_point() 
-############################
-## Google Scholar grab
-############################
-library(scholar)
 
-ids <- c('id3d88wAAAAJ&hl', 'Bty5Ue0AAAAJ&hl', 'tX3iv2AAAAAJ&hl',
-         '-xMz64oAAAAJ&hl', 'VRlWQ7QAAAAJ&hl', 'a0O7W6IAAAAJ&hl', '_b0ToKMAAAAJ',
-         'aDg-hUEAAAAJ')
-# names <- c('RDH', 'KR', 'DF', 'DAF', 'EMG', 'BD', 'MB', 'AB')
-mss <- 100
-
-gs.compare <- compare_scholars(ids, mss)
-
-ggplot(gs.compare, aes (year, cites, fill = name)) +
-  geom_col(position = 'dodge')
-
-df.gs <- compare_scholar_careers(ids)
-ggplot(df.gs, aes (career_year, cites, color = name)) +
-  geom_line(aes(linetype = name))
-
-#  git remote set-url origin https://github.com/deanhardy/academic-progress.git
 
 
