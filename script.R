@@ -328,7 +328,7 @@ ggplot(gs.compare, aes (year, cites, fill = name)) +
 
 df.gs <- compare_scholar_careers(ids)
 ggplot(df.gs, aes (career_year, cites, color = name)) +
-  geom_line()
+  geom_line(aes(linetype = name))
 
 #  git remote set-url origin https://github.com/deanhardy/academic-progress.git
 
