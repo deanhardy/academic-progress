@@ -287,11 +287,11 @@ fig_gr
 
 # legd <- legendGrob(c('Published/Awarded', 1, 5, pch = 2))
 
-## submission and accceptance rates
+## submission and publication rates
 tiff(file.path(datadir, "fig-manuscript-rates.tiff"), width = 6.5, height = 9, units = "in", 
      res = 300, compression = "lzw")
 # grid.arrange(fig_rv, fig_gr, fig_ms, ncol = 1, nrow = 3)
-plot_grid(fig_sr, fig_ar, align = 'v', nrow = 2, rel_heights = c(1/2, 1/2))
+plot_grid(fig_sr, fig_pr, align = 'v', nrow = 2, rel_heights = c(1/2, 1/2))
 dev.off()
 
 ## combining all
