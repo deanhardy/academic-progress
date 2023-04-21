@@ -9,6 +9,9 @@ library(lubridate)
 library(gridExtra)
 library(cowplot)
 
+now.date <- Sys.Date()
+# now.date <- as.Date('2023-08-15')
+  
 #define data directory
 datadir <- file.path('/Users/dhardy/Dropbox/r_data/academic-progress')
 
@@ -29,7 +32,7 @@ df <- read.csv(file.path(datadir, "data.csv")) %>%
          end_date = c(date[-1],
                       if_else(last(action) %in%
                                 c("accepted", "review submitted", "proposal awarded", "proposal declined"),
-                              last(date), Sys.Date()))) %>%
+                              last(date), now.date))) %>%
   arrange(start_date)
   
 
@@ -51,7 +54,7 @@ x <- c(0, 1) # of years of tenure clock stoppage
 for (j in 1:length(x)) {
 
   for (i in 1:length(evt_dates)) {
-    yrs <- interval(evt_dates[[i]], Sys.Date()) %>%
+    yrs <- interval(evt_dates[[i]], now.date) %>%
     time_length('years')
     
     OUT <- ms %>%
@@ -61,10 +64,10 @@ for (j in 1:length(x)) {
                 accepted = sum(action == 'accepted'),
                 published = sum(action == 'issue assigned')) %>%
       mutate(yrs_tt_stop = x[[j]], 
-             s_rate = round(submitted/(yrs-x[[j]]), 1), 
-             a_rate = round(accepted/(yrs-x[[j]]), 1),
-             p_rate = round(published/(yrs-x[[j]]), 1),
-             years = round((yrs-x[[j]]), 1),
+             s_rate = round(submitted/(yrs-x[[j]]), 2), 
+             a_rate = round(accepted/(yrs-x[[j]]), 2),
+             p_rate = round(published/(yrs-x[[j]]), 2),
+             years = round((yrs-x[[j]]), 2),
              evt_dates = evt_dates[[i]])
     
     ms_rate <- rbind(OUT, ms_rate)
@@ -88,7 +91,7 @@ fig_sr <- ggplot(ms_rate) +
                      minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
   scale_fill_manual(values = c('grey80','grey30')) + 
   labs(fill = 'Tenure Stoppage (years)') + 
-  ggtitle(paste("Submission Rates as of", Sys.Date())) +
+  ggtitle(paste("Submission Rates as of", now.date)) +
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.2, 0.85),
@@ -108,7 +111,7 @@ fig_ar <- ggplot(ms_rate) +
                      minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
   scale_fill_manual(values = c('grey80','grey30')) + 
   labs(fill = 'Tenure Stoppage (years)') + 
-  ggtitle(paste("Acceptance Rates as of", Sys.Date())) +
+  ggtitle(paste("Acceptance Rates as of", now.date)) +
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.2, 0.85),
@@ -128,7 +131,7 @@ fig_pr <- ggplot(ms_rate) +
                      minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
   scale_fill_manual(values = c('grey80','grey30')) + 
   labs(fill = 'Tenure Stoppage (years)') + 
-  ggtitle(paste("Publication Rates as of", Sys.Date())) +
+  ggtitle(paste("Publication Rates as of", now.date)) +
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.2, 0.85),
@@ -201,7 +204,7 @@ fig_ms <- ggplot(ms) +
   #           size = 3, hjust = 0) +
   labs(x = "Manuscript ID") +
   scale_y_date(name = "Year", date_breaks = "1 year", date_labels = "%Y",
-               limits = c(first(df$date), Sys.Date())) +  
+               limits = c(first(df$date), now.date)) +  
   scale_color_manual(name = "Status",
                      labels = c("In revision", "Under review"),
                      #values = c('dark blue', 'dark red')) + 
@@ -214,7 +217,7 @@ fig_ms <- ggplot(ms) +
         panel.grid.major.x = element_line('grey', size = 0.5, linetype = "dotted"),
         axis.text = element_text(color = 'black'),
         plot.margin = margin(0.5,0.5,0.5,0.5, 'cm')) +
-  annotate("rect", ymin = as.Date('2019-08-16'), ymax = as.Date('2020-08-15'), xmin = 'ms01', xmax = 'ms15',
+  annotate("rect", ymin = as.Date('2019-08-16'), ymax = as.Date('2020-08-15'), xmin = 'ms01', xmax = 'ms16',
            alpha = .2) +
   ggtitle("Manuscript Timelines") +
   labs(caption = "Leading number indicates author/Co-PI position.\nAsterisk indicates accepted/awarded.\nBox indicates published in an issue.\nShading indicates tenure clock stoppage.") + 
@@ -234,8 +237,8 @@ fig_rv <- ggplot(rv) +
   geom_hline(yintercept = as.Date('2018-12-18'), linetype = 'dashed') +
   labs(x = "Peer Review ID") +
   scale_y_date(name = "", date_breaks = "1 year", date_labels = "%Y",
-               limits = c(first(df$date), Sys.Date())) + 
-  ggtitle(paste("Status as of", Sys.Date())) +
+               limits = c(first(df$date), now.date)) + 
+  ggtitle(paste("Status as of", now.date)) +
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.18, 0.8),
@@ -271,7 +274,7 @@ fig_gr <- ggplot(gr) +
   geom_hline(yintercept = as.Date('2018-12-18'), linetype = 'dashed') +
   labs(x = "Grant Proposal ID") +
   scale_y_date(name = "", date_breaks = "1 year", date_labels = "%Y",
-               limits = c(first(df$date), Sys.Date())) + 
+               limits = c(first(df$date), now.date)) + 
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.3, 0.8),
