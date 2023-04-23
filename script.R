@@ -311,8 +311,27 @@ tiff(file.path(datadir, "fig-ms-pub-rates.tiff"), width = 7, height = 9, units =
 plot_grid(fig_pr, fig_ms, align = 'v', nrow = 2, rel_heights = c(1/2, 1/2))
 dev.off()
 
-## perspective on initial submission rates
+## perspective on initial submission rates and other assocaited rates
 ggplot(filter(df, action == 'initial submission'), aes(date, id)) + geom_point() 
 
+df.rates <- df %>%
+  mutate(action = ifelse(action == 'initial submission', 'submitted', 
+                               ifelse(action == 'issue assigned', 'published', action))) %>%
+  filter(type == 'ms' & id != 'msXX' & action %in% c('submitted', 'accepted', 'published'))
 
+df.rates$action <- factor(df.rates$action, levels = c('submitted', 'accepted', 'published'))
+  
+ggplot(df.rates, aes(date, id, color = action)) + 
+  geom_point() 
 
+## table summary of submission, accepted, published rates
+sumy <- filter(df, type == 'ms' & id != 'msXX' & action %in% c('initial submission', 'accepted', 'issue assigned')) %>%
+  mutate(yr = year(date)) %>%
+  group_by(yr) %>%
+  count(action) %>%
+  ungroup() %>%
+  mutate(action = ifelse(action == 'initial submission', 'submitted', 
+                         ifelse(action == 'issue assigned', 'published', action)))
+
+annual.rates <- spread(sumy, action, n, fill = 0) %>%
+  relocate(submitted, .before = accepted)
