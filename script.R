@@ -335,3 +335,10 @@ sumy <- filter(df, type == 'ms' & id != 'msXX' & action %in% c('initial submissi
 
 annual.rates <- spread(sumy, action, n, fill = 0) %>%
   relocate(submitted, .before = accepted)
+
+## want to work on developing daily time series showing rates (of submission, acceptance, publication) over time; 
+## i.e., day to day calculation of rates
+
+
+
+
