@@ -321,8 +321,16 @@ df.rates <- df %>%
 
 df.rates$action <- factor(df.rates$action, levels = c('submitted', 'accepted', 'published'))
   
-ggplot(df.rates, aes(date, id, color = action)) + 
-  geom_point() 
+milestones <- ggplot(df.rates, aes(date, id, color = action)) + 
+  geom_point() +
+  ggtitle('Manuscript Milestones') +
+  theme_bw()
+
+## pub rates plus ms timelines
+tiff(file.path(datadir, "fig-ms-milestones.tiff"), width = 9, height = 7, units = "in", 
+     res = 300, compression = "lzw")
+milestones
+dev.off()
 
 ## table summary of submission, accepted, published rates
 sumy <- filter(df, type == 'ms' & id != 'msXX' & action %in% c('initial submission', 'accepted', 'issue assigned')) %>%
@@ -330,11 +338,20 @@ sumy <- filter(df, type == 'ms' & id != 'msXX' & action %in% c('initial submissi
   group_by(yr) %>%
   count(action) %>%
   ungroup() %>%
-  mutate(action = ifelse(action == 'initial submission', 'submitted', 
+  mutate(action = ifelse(action == 'submission', 'submitted', 
                          ifelse(action == 'issue assigned', 'published', action)))
 
 annual.rates <- spread(sumy, action, n, fill = 0) %>%
-  relocate(submitted, .before = accepted)
+  relocate(submitted, .before = accepted) %>%
+  gather('action', 'value', 2:4 )
+
+ggplot(annual.rates, aes(yr, value, fill = action)) + 
+  # geom_col(position = 'dodge', just = 0.8, width = 0.5) +
+  geom_line(aes(color = action)) + 
+  scale_y_continuous(name = 'Manuscripts (#)') + 
+  scale_x_continuous(name = 'Year', breaks = seq(2012, 2023, 1)) + 
+  theme_bw()
+  
 
 ## want to work on developing daily time series showing rates (of submission, acceptance, publication) over time; 
 ## i.e., day to day calculation of rates
