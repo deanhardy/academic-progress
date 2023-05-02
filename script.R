@@ -325,6 +325,7 @@ milestones <- ggplot(df.rates, aes(date, id, color = action)) +
   geom_point() +
   ggtitle('Manuscript Milestones') +
   theme_bw()
+milestones
 
 ## pub rates plus ms timelines
 tiff(file.path(datadir, "fig-ms-milestones.tiff"), width = 9, height = 7, units = "in", 
@@ -332,13 +333,31 @@ tiff(file.path(datadir, "fig-ms-milestones.tiff"), width = 9, height = 7, units 
 milestones
 dev.off()
 
+## calculate average rate of publication from submission to publication
+pubrate <- df %>%
+  filter(type == 'ms' & id != 'msXX' & action %in% c('initial submission', 'accepted', 'issue assigned')) %>%
+  mutate(action = ifelse(action == 'initial submission', 'submitted', 
+                         ifelse(action == 'issue assigned', 'published', action))) %>%
+  select(id, date, action, descriptor) %>%
+  spread(action, date) %>%
+  mutate(avg2pub = accepted - submitted)
+
+mean(pubrate$avg2pub)
+median(pubrate$avg2pub)
+
+ggplot(pubrate, aes(avg2pub, descriptor)) + 
+  # geom_boxplot()
+  geom_point() + 
+  geom_vline(xintercept = median(pubrate$avg2pub)) + 
+  theme_bw()
+
 ## table summary of submission, accepted, published rates
 sumy <- filter(df, type == 'ms' & id != 'msXX' & action %in% c('initial submission', 'accepted', 'issue assigned')) %>%
   mutate(yr = year(date)) %>%
   group_by(yr) %>%
   count(action) %>%
   ungroup() %>%
-  mutate(action = ifelse(action == 'submission', 'submitted', 
+  mutate(action = ifelse(action == 'initial submission', 'submitted', 
                          ifelse(action == 'issue assigned', 'published', action)))
 
 annual.rates <- spread(sumy, action, n, fill = 0) %>%
@@ -351,7 +370,8 @@ ggplot(annual.rates, aes(yr, value, fill = action)) +
   scale_y_continuous(name = 'Manuscripts (#)') + 
   scale_x_continuous(name = 'Year', breaks = seq(2012, 2023, 1)) + 
   theme_bw()
-  
+
+
 
 ## want to work on developing daily time series showing rates (of submission, acceptance, publication) over time; 
 ## i.e., day to day calculation of rates
