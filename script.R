@@ -382,6 +382,7 @@ gr <- df %>% filter(type == 'gr' & date >= '2019-08-15' &
                       str_detect(target, 'UofSC', negate = T) & 
                       amount != 'n/a')
 
+## summarise totals by awarded/declined
 ext.sum <- gr %>%
   group_by(status) %>%
   mutate(amount = as.numeric(amount), sub.amount = as.numeric(sub.amount)) %>%
