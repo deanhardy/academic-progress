@@ -376,6 +376,16 @@ ggplot(annual.rates, aes(yr, value, fill = action)) +
 ## want to work on developing daily time series showing rates (of submission, acceptance, publication) over time; 
 ## i.e., day to day calculation of rates
 
+## grant application rates and amounts
+gr <- df %>% filter(type == 'gr' & date >= '2019-08-15' & 
+                      status %in% c('declined', 'awarded') &
+                      str_detect(target, 'UofSC', negate = T) & 
+                      amount != 'n/a')
 
-
+ext.sum <- gr %>%
+  group_by(status) %>%
+  mutate(amount = as.numeric(amount), sub.amount = as.numeric(sub.amount)) %>%
+  summarise(amount = sum(amount), sub = sum(sub.amount)) %>%
+  bind_rows(summarise(., across(where(is.numeric), sum),
+                      across(where(is.character), ~'total')))
 
