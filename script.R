@@ -377,7 +377,7 @@ ggplot(annual.rates, aes(yr, value, fill = action)) +
 ## i.e., day to day calculation of rates
 
 ## grant application rates and amounts
-gr <- df %>% filter(type == 'gr' & date >= '2019-08-15' & 
+gr <- df %>% filter(type == 'gr' & date >= '2019-08-16' & 
                       status %in% c('declined', 'awarded') &
                       str_detect(target, 'UofSC', negate = T) & 
                       amount != 'n/a')
