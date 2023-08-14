@@ -377,7 +377,7 @@ ggplot(annual.rates, aes(yr, value, fill = action)) +
 ## i.e., day to day calculation of rates
 
 ## grant application rates and amounts
-gr <- df %>% filter(type == 'gr' & date >= '2019-08-16' & 
+gr <- df %>% filter(type == 'gr' & 
                       status %in% c('declined', 'awarded') &
                       str_detect(target, 'UofSC', negate = T) & 
                       amount != 'n/a')
@@ -385,8 +385,8 @@ gr <- df %>% filter(type == 'gr' & date >= '2019-08-16' &
 ## summarise totals by awarded/declined
 ext.sum <- gr %>%
   group_by(status) %>%
-  mutate(amount = as.numeric(amount), sub.amount = as.numeric(sub.amount)) %>%
-  summarise(amount = sum(amount), sub = sum(sub.amount)) %>%
+  mutate(amount = as.numeric(amount), inst.amount = as.numeric(institution)) %>%
+  summarise(amount = sum(amount), inst = sum(inst.amount, na.rm = T)) %>%
   bind_rows(summarise(., across(where(is.numeric), sum),
                       across(where(is.character), ~'total')))
 
