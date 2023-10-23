@@ -327,7 +327,6 @@ milestones <- ggplot(df.rates, aes(date, id, color = action)) +
   theme_bw()
 milestones
 
-## pub rates plus ms timelines
 tiff(file.path(datadir, "fig-ms-milestones.tiff"), width = 9, height = 7, units = "in", 
      res = 300, compression = "lzw")
 milestones
