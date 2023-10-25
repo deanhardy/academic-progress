@@ -82,6 +82,50 @@ ms_rate <- left_join(ms_rate, evt) %>%
 
 write.csv(ms_rate, file.path(datadir, "ms_rate.csv"))
 
+# lo <- as.character(Sys.Date()) - as.character(as.Date("2014-07-16"))
+
+## number submissions/pubs per year since significant events
+cont_dates <- seq(as.Date("2014-07-16"), by = "day", length.out = 4117)
+ms_rate_cont <- NULL # used in loop appending outputs
+x <- c(0, 1) # of days of tenure clock stoppage
+OUT <- NULL
+
+start.time <- Sys.time()
+# 
+for (j in 1:length(x)) {
+  
+  for (i in 1:length(cont_dates)) {
+    yrs <- interval(cont_dates[[i]], now.date) %>%
+      time_length('years')
+    
+    OUT <- ms %>%
+      filter(date >= cont_dates[[i]]) %>%
+      group_by(type) %>%
+      summarise(submitted = sum(action == 'initial submission'),
+                accepted = sum(action == 'accepted'),
+                published = sum(action == 'issue assigned')) %>%
+      mutate(yrs_tt_stop = x[[j]], 
+             s_rate = round(submitted/(yrs-x[[j]]), 2), 
+             a_rate = round(accepted/(yrs-x[[j]]), 2),
+             p_rate = round(published/(yrs-x[[j]]), 2),
+             years = round((yrs-x[[j]]), 2),
+             cont_dates = cont_dates[[i]])
+    
+    ms_rate_cont <- rbind(OUT, ms_rate_cont)
+  }
+}
+
+end.time <- Sys.time()
+end.time - start.time 
+
+# ms_rate <- left_join(ms_rate, evt) %>%
+#   mutate(evt_dates_par = paste('(', evt_dates, ')', sep = '')) %>%
+#   mutate(event_names = paste(events, evt_dates_par, sep = '\n')) %>%
+#   select(yrs_tt_stop, events, evt_dates, event_names, years, submitted, accepted, published, s_rate, a_rate, p_rate) %>%
+#   arrange(yrs_tt_stop, desc(years))
+
+write.csv(ms_rate, file.path(datadir, "ms_rate_continuous.csv"))
+
 ## plot submission rates
 fig_sr <- ggplot(ms_rate) +
   geom_col(aes(reorder(event_names, -years), s_rate,fill = as.character(yrs_tt_stop)), position = 'dodge2') + 
