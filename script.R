@@ -85,21 +85,23 @@ write.csv(ms_rate, file.path(datadir, "ms_rate.csv"))
 # lo <- as.character(Sys.Date()) - as.character(as.Date("2014-07-16"))
 
 ## number submissions/pubs per year since significant events
-cont_dates <- seq(as.Date("2014-07-16"), by = "day", length.out = 4117)
+cont_dates <- seq(as.Date("2012-07-16"), by = "day", length.out = 4120)
 ms_rate_cont <- NULL # used in loop appending outputs
-x <- c(0, 1) # of days of tenure clock stoppage
+x <- c(0) # of days of tenure clock stoppage
 OUT <- NULL
 
 start.time <- Sys.time()
-# 
+
+## needs revision of math for rates to be continuous date minus initial date rather than by years and
+## interval between cont.date initial date.
 for (j in 1:length(x)) {
-  
+
   for (i in 1:length(cont_dates)) {
-    yrs <- interval(cont_dates[[i]], now.date) %>%
+    yrs <- interval(cont_dates[[i]], as.Date("2012-07-16")) %>%
       time_length('years')
     
     OUT <- ms %>%
-      filter(date >= cont_dates[[i]]) %>%
+      # filter(date >= cont_dates[[i]]) %>%
       group_by(type) %>%
       summarise(submitted = sum(action == 'initial submission'),
                 accepted = sum(action == 'accepted'),
