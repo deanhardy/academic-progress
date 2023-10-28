@@ -85,41 +85,49 @@ write.csv(ms_rate, file.path(datadir, "ms_rate.csv"))
 # lo <- as.character(Sys.Date()) - as.character(as.Date("2014-07-16"))
 
 ## number submissions/pubs per year since significant events
-cont_dates <- seq(as.Date("2012-07-16"), by = "day", length.out = 4120)
+cont_dates <- seq(as.Date("2014-02-24", ), by = "day", length.out = 3532)
 ms_rate_cont <- NULL # used in loop appending outputs
 x <- c(0) # of days of tenure clock stoppage
+y <- c('issue assigned', 'accepted') ## 'initial submission'
+d <- c("2014-02-24",'2013-06-17')
+
 OUT <- NULL
 
 start.time <- Sys.time()
 
 ## needs revision of math for rates to be continuous date minus initial date rather than by years and
 ## interval between cont.date initial date.
-for (j in 1:length(x)) {
+for(z in 1:length(y)) {
+  for (w in 1:length(d)) {
+    for (j in 1:length(x)) {
 
   for (i in 1:length(cont_dates)) {
-    yrs <- interval(cont_dates[[i]], as.Date("2012-07-16")) %>%
+    yrs <- interval(as.Date(d[[w]]), cont_dates[[i]]) %>%
       time_length('years')
     
     OUT <- ms %>%
-      # filter(date >= cont_dates[[i]]) %>%
+      filter(date <= cont_dates[[i]], action == y[[z]]) %>%
       group_by(type) %>%
-      summarise(submitted = sum(action == 'initial submission'),
-                accepted = sum(action == 'accepted'),
-                published = sum(action == 'issue assigned')) %>%
+      summarise(sum = sum(action == y[[z]])) %>%
       mutate(yrs_tt_stop = x[[j]], 
-             s_rate = round(submitted/(yrs-x[[j]]), 2), 
-             a_rate = round(accepted/(yrs-x[[j]]), 2),
-             p_rate = round(published/(yrs-x[[j]]), 2),
+             action = y[[z]],
+             rate = round(sum/(yrs-x[[j]]), 2), 
              years = round((yrs-x[[j]]), 2),
              cont_dates = cont_dates[[i]])
     
     ms_rate_cont <- rbind(OUT, ms_rate_cont)
+      }
+    }
   }
 }
 
 end.time <- Sys.time()
 end.time - start.time 
 
+ggplot(filter(ms_rate_cont, yrs_tt_stop == 0, years > 0.99)) +
+  geom_line(aes(cont_dates, rate, color = action))
+
+  
 # ms_rate <- left_join(ms_rate, evt) %>%
 #   mutate(evt_dates_par = paste('(', evt_dates, ')', sep = '')) %>%
 #   mutate(event_names = paste(events, evt_dates_par, sep = '\n')) %>%
