@@ -48,7 +48,7 @@ evt_dates <- c('2012-07-16', '2015-05-14', '2016-08-05', '2018-12-18', '2019-08-
 events <- c('First MS', 'First 1st author', 'PhD conferred', 'UofSC offer', 'UofSC start')
 evt <- data.frame(evt_dates, events)
 ms_rate <- NULL # used in loop appending outputs
-x <- c(0, 1) # of years of tenure clock stoppage
+x <- c(0, 1, 2, 3) # of years of tenure clock stoppage
 
 # 
 for (j in 1:length(x)) {
@@ -95,37 +95,37 @@ OUT <- NULL
 
 start.time <- Sys.time()
 
-## needs revision of math for rates to be continuous date minus initial date rather than by years and
-## interval between cont.date initial date.
-for(z in 1:length(y)) {
-  for (w in 1:length(d)) {
-    for (j in 1:length(x)) {
-
-  for (i in 1:length(cont_dates)) {
-    yrs <- interval(as.Date(d[[w]]), cont_dates[[i]]) %>%
-      time_length('years')
-    
-    OUT <- ms %>%
-      filter(date <= cont_dates[[i]], action == y[[z]]) %>%
-      group_by(type) %>%
-      summarise(sum = sum(action == y[[z]])) %>%
-      mutate(yrs_tt_stop = x[[j]], 
-             action = y[[z]],
-             rate = round(sum/(yrs-x[[j]]), 2), 
-             years = round((yrs-x[[j]]), 2),
-             cont_dates = cont_dates[[i]])
-    
-    ms_rate_cont <- rbind(OUT, ms_rate_cont)
-      }
-    }
-  }
-}
-
-end.time <- Sys.time()
-end.time - start.time 
-
-ggplot(filter(ms_rate_cont, yrs_tt_stop == 0, years > 0.99)) +
-  geom_line(aes(cont_dates, rate, color = action))
+# ## needs revision of math for rates to be continuous date minus initial date rather than by years and
+# ## interval between cont.date initial date.
+# for(z in 1:length(y)) {
+#   for (w in 1:length(d)) {
+#     for (j in 1:length(x)) {
+# 
+#   for (i in 1:length(cont_dates)) {
+#     yrs <- interval(as.Date(d[[w]]), cont_dates[[i]]) %>%
+#       time_length('years')
+#     
+#     OUT <- ms %>%
+#       filter(date <= cont_dates[[i]], action == y[[z]]) %>%
+#       group_by(type) %>%
+#       summarise(sum = sum(action == y[[z]])) %>%
+#       mutate(yrs_tt_stop = x[[j]], 
+#              action = y[[z]],
+#              rate = round(sum/(yrs-x[[j]]), 2), 
+#              years = round((yrs-x[[j]]), 2),
+#              cont_dates = cont_dates[[i]])
+#     
+#     ms_rate_cont <- rbind(OUT, ms_rate_cont)
+#       }
+#     }
+#   }
+# }
+# 
+# end.time <- Sys.time()
+# end.time - start.time 
+# 
+# ggplot(filter(ms_rate_cont, yrs_tt_stop == 0, years > 0.99)) +
+#   geom_line(aes(cont_dates, rate, color = action))
 
   
 # ms_rate <- left_join(ms_rate, evt) %>%
@@ -143,7 +143,7 @@ fig_sr <- ggplot(ms_rate) +
   geom_hline(yintercept = 2, linetype = 'longdash') + 
   scale_y_continuous(name = "Mean Annual Manuscript Submission Rate", breaks = seq(0, 4, 1),
                      minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
-  scale_fill_manual(values = c('grey80','grey30')) + 
+  scale_fill_manual(values = c('grey80','grey60', 'grey40', 'grey20')) + 
   labs(fill = 'Tenure Stoppage (years)') + 
   ggtitle(paste("Submission Rates as of", now.date)) +
   theme(legend.background = element_rect(color = "black"),
@@ -163,7 +163,7 @@ fig_ar <- ggplot(ms_rate) +
   geom_hline(yintercept = 2, linetype = 'longdash') + 
   scale_y_continuous(name = "Mean Annual Manuscript Acceptance Rate", breaks = seq(0, 4, 1),
                      minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
-  scale_fill_manual(values = c('grey80','grey30')) + 
+  scale_fill_manual(values = c('grey80','grey60', 'grey40', 'grey20')) + 
   labs(fill = 'Tenure Stoppage (years)') + 
   ggtitle(paste("Acceptance Rates as of", now.date)) +
   theme(legend.background = element_rect(color = "black"),
@@ -183,7 +183,7 @@ fig_pr <- ggplot(ms_rate) +
   geom_hline(yintercept = 2, linetype = 'longdash') + 
   scale_y_continuous(name = "Mean Annual Manuscript Publication Rate", breaks = seq(0, 4, 1),
                      minor_breaks = seq(0, 4, 0.1), expand = c(0,0), limits = c(0,4)) + 
-  scale_fill_manual(values = c('grey80','grey30')) + 
+  scale_fill_manual(values = c('grey80','grey60', 'grey40', 'grey20')) + 
   labs(fill = 'Tenure Stoppage (years)') + 
   ggtitle(paste("Publication Rates as of", now.date)) +
   theme(legend.background = element_rect(color = "black"),
@@ -432,7 +432,7 @@ ggplot(annual.rates, aes(yr, value, fill = action)) +
 ## grant application rates and amounts
 gr <- df %>% filter(type == 'gr' & 
                       status %in% c('declined', 'awarded') &
-                      str_detect(target, 'UofSC', negate = T) & 
+                      str_detect(target, 'UofSC', negate = T) &
                       amount != 'n/a')
 
 ## summarise totals by awarded/declined
