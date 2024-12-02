@@ -442,4 +442,5 @@ ext.sum <- gr %>%
   summarise(amount = sum(amount), inst = sum(inst.amount, na.rm = T)) %>%
   bind_rows(summarise(., across(where(is.numeric), sum),
                       across(where(is.character), ~'total')))
-
+ext.sum[1,1:3]
+ext.sum$inst[1] - 25779 ## USC
