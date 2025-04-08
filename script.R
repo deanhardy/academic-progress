@@ -352,7 +352,7 @@ plot_grid(fig_sr, fig_pr, align = 'v', nrow = 2, rel_heights = c(1/2, 1/2))
 dev.off()
 
 ## combining all
-tiff(file.path(datadir, "fig-faceted.tiff"), width = 7, height = 9, units = "in", 
+tiff(file.path(datadir, "fig-faceted.tiff"), width = 8.5, height = 14, units = "in", 
      res = 300, compression = "lzw")
 # grid.arrange(fig_rv, fig_gr, fig_ms, ncol = 1, nrow = 3)
 plot_grid(fig_rv, fig_gr, fig_ms, align = 'v', nrow = 3, rel_heights = c(1/3, 1/4, 1/2))
