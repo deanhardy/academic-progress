@@ -253,6 +253,9 @@ fig_ms <- ggplot(ms) +
   geom_hline(yintercept = as.Date('2020-03-11'), linetype = 'dashed') +
   geom_text(aes(label = '<<< COVID19', y = as.Date('2020-03-11'), x = 'ms10'),
             size = 3, hjust = 0) +
+  geom_hline(yintercept = as.Date('2023-10-30'), linetype = 'dashed') +
+  geom_text(aes(label = '<< DoubleTrouble', y = as.Date('2023-10-30'), x = 'ms12'),
+            size = 3, hjust = 0) +
   # geom_text(aes(label = paste('Submission rate =', round(ms_rate$s_rate, 2), '/yr'), 
   #               y = as.Date('2013-01-01'), x = 'ms09'),
   #           size = 3, hjust = 0) +
@@ -271,7 +274,11 @@ fig_ms <- ggplot(ms) +
         panel.grid.major.x = element_line('grey', size = 0.5, linetype = "dotted"),
         axis.text = element_text(color = 'black'),
         plot.margin = margin(0.5,0.5,0.5,0.5, 'cm')) +
-  annotate("rect", ymin = as.Date('2019-08-16'), ymax = as.Date('2020-08-15'), xmin = 'ms01', xmax = 'ms16',
+  annotate("rect", ymin = as.Date('2019-08-16'), ymax = as.Date('2020-08-15'), xmin = 'ms01', xmax = 'ms20',
+           alpha = .2) +
+  annotate("rect", ymin = as.Date('2020-03-11'), ymax = as.Date('2021-03-10'), xmin = 'ms01', xmax = 'ms20',
+           alpha = .2) +
+  annotate("rect", ymin = as.Date('2023-10-31'), ymax = as.Date('2024-10-30'), xmin = 'ms01', xmax = 'ms20',
            alpha = .2) +
   ggtitle("Manuscript Timelines") +
   labs(caption = "Leading number indicates author/Co-PI position.\nAsterisk indicates accepted/awarded.\nBox indicates published in an issue.\nShading indicates tenure clock stoppage.") + 
@@ -287,8 +294,6 @@ fig_rv <- ggplot(rv) +
                      ymin = start_date),
                  size = 1,
                  show.legend = F) +
-  geom_hline(yintercept = as.Date('2016-08-05'), linetype = 'dashed') +
-  geom_hline(yintercept = as.Date('2018-12-18'), linetype = 'dashed') +
   labs(x = "Peer Review ID") +
   scale_y_date(name = "", date_breaks = "1 year", date_labels = "%Y",
                limits = c(first(df$date), now.date)) + 
@@ -312,23 +317,36 @@ gr <- filter(df, type == 'gr' & action != 'pre-proposal submitted')
 fig_gr <- ggplot(gr) +
   geom_linerange(aes(x = id,
                      ymax = end_date,
-                     ymin = start_date),
+                     ymin = start_date,
+                     color = role),
                  size = 1,
                  show.legend = F) +
-  geom_text(aes(label = place, y = start_date, x = id),
-            filter(gr, action %in% c('proposal submitted')),
-            hjust = 1.8, vjust = 0.4,
-            size = 4) +
-  geom_point(aes(y = end_date, x = id),
+  # geom_text(aes(label = place, y = start_date, x = id),
+  #           filter(gr, action %in% c('proposal submitted')),
+  #           hjust = 1.8, vjust = 0.4,
+  #           size = 4) +
+  geom_point(aes(y = end_date, x = id,color = role),
              filter(gr, status == 'awarded'),
-             size = 3,
              shape = 8,
+             size = 2,
              show.legend = F) +
-  geom_hline(yintercept = as.Date('2016-08-05'), linetype = 'dashed') +
-  geom_hline(yintercept = as.Date('2018-12-18'), linetype = 'dashed') +
+  geom_errorbar(aes(x = id,
+                    ymax = as.Date("2000-01-01"),
+                    ymin = as.Date('2010-01-01'),
+                    color = role),
+                size = 1,
+                # filter(ms, status != 'accepted'),
+                show.legend = T) + ## trick for making horizontal legend bars
+  # geom_hline(yintercept = as.Date('2016-08-05'), linetype = 'dashed') +
+  # geom_hline(yintercept = as.Date('2018-12-18'), linetype = 'dashed') +
   labs(x = "Grant Proposal ID") +
   scale_y_date(name = "", date_breaks = "1 year", date_labels = "%Y",
                limits = c(first(df$date), now.date)) + 
+  scale_color_manual(name = "Role",
+                     labels = c('Co-PI', 'PI', 'Senior Personnel'),
+                     #values = c('dark blue', 'dark red')) + 
+                     values = c('grey55', 'black', 'grey80')
+                     ) + 
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
         legend.position = c(0.3, 0.8),
