@@ -460,5 +460,14 @@ ext.sum <- gr %>%
   summarise(amount = sum(amount), inst = sum(inst.amount, na.rm = T)) %>%
   bind_rows(summarise(., across(where(is.numeric), sum),
                       across(where(is.character), ~'total')))
-ext.sum[1,1:3]
-ext.sum$inst[1] - 25779 ## USC
+ext.sum[1,1:3] ## awarded
+ext.sum$inst[1] - 25779 ## awarded to USC
+
+## awarded to USC as PI
+gr %>%
+  group_by(status) %>%
+  filter(role == 'pi' | subrole == 'pi') %>%
+  mutate(amount = as.numeric(amount), inst.amount = as.numeric(institution)) %>%
+  summarise(amount = sum(amount), inst = sum(inst.amount, na.rm = T))%>%
+  bind_rows(summarise(., across(where(is.numeric), sum),
+                      across(where(is.character), ~'total')))
