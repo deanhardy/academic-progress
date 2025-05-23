@@ -10,7 +10,7 @@ library(gridExtra)
 library(cowplot)
 
 now.date <- Sys.Date()
-now.date <- as.Date('2025-05-31')
+now.date <- as.Date('2025-08-15')
   
 #define data directory
 datadir <- file.path('/Users/dhardy/Dropbox/r_data/academic-progress')
