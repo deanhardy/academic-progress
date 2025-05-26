@@ -10,7 +10,7 @@ library(gridExtra)
 library(cowplot)
 
 now.date <- Sys.Date()
-now.date <- as.Date('2025-08-15')
+# now.date <- as.Date('2025-08-15')
   
 #define data directory
 datadir <- file.path('/Users/dhardy/Dropbox/r_data/academic-progress')
@@ -148,8 +148,8 @@ fig_sr <- ggplot(ms_rate) +
   ggtitle(paste("Submission Rates as of", now.date)) +
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
-        legend.position = c(0.2, 0.85),
-        panel.background = element_rect('white'),
+        legend.position = c(0.175, 0.80),
+        panel.background = element_rect('whi te'),
         panel.border = element_rect(colour = 'black', fill = "transparent"),
         panel.grid.major.y = element_line('grey', size = 0.5, linetype = "solid"),
         panel.grid.minor = element_line(colour="grey", size=0.1, linetype = 'longdash'),
@@ -188,7 +188,7 @@ fig_pr <- ggplot(ms_rate) +
   ggtitle(paste("Publication Rates as of", now.date)) +
   theme(legend.background = element_rect(color = "black"),
         legend.key = element_rect(fill = 'white'),
-        legend.position = c(0.2, 0.85),
+        legend.position = c(0.175, 0.80),
         panel.background = element_rect('white'),
         panel.border = element_rect(colour = 'black', fill = "transparent"),
         panel.grid.major.y = element_line('grey', size = 0.5, linetype = "solid"),
